@@ -1,4 +1,4 @@
-# In another Region:
+# In us-east-2:
 # 1. Create 2 ec2-instances (app_server and db_server)
 # 2. Create 1 VPC and 1 subnet in that VPC
 # 3. Create 1 security group
@@ -9,13 +9,13 @@
 # Configure the AWS Provider
 provider "aws" {
   region  = "us-east-2"
-
 }
 
 resource "aws_instance" "app_server" {
-  ami = "ami-0a3c3a20c09d6f377"
+  ami = "ami-05fb0b8c1424f266b"
   instance_type = "t2.medium"
-  key_name = "java-app-key"
+  key_name = "task1-key"
+  subnet_id = aws_subnet.app_subnet.id
 
   tags = {
     Name = "app_server"
@@ -24,9 +24,10 @@ resource "aws_instance" "app_server" {
 }
 
 resource "aws_instance" "db_server" {
-  ami = "ami-0a3c3a20c09d6f377"
+  ami = "ami-05fb0b8c1424f266b"
   instance_type = "t2.medium"
-  key_name = "java-app-key"
+  key_name = "task1-key"
+  subnet_id = aws_subnet.app_subnet.id
   
   tags = {
     Name = "db_server"
@@ -79,4 +80,23 @@ resource "aws_security_group" "allow_tls" {
   tags = {
     Name = "allow_tls"
   }
+}
+
+# Create key pair
+resource "aws_key_pair" "app-key" {
+  key_name   = "task1-key"
+  public_key = tls_private_key.app-tls-key.public_key_openssh
+}
+
+# Generate RSA key pair
+resource "tls_private_key" "app-tls-key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096  # 512 bytes = 256 to 512 chars
+}
+
+# Get private key
+resource "local_file" "app-private-key" {
+  filename = "task1-private-key.pem"
+  content = tls_private_key.app-tls-key.private_key_pem
+  # file_permission = "0600"
 }
