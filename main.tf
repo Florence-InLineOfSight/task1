@@ -13,7 +13,7 @@ provider "aws" {
 }
 
 resource "aws_instance" "app_server" {
-  ami = "ami-0c7217cdde317cfec"
+  ami = "ami-0a3c3a20c09d6f377"
   instance_type = "t2.medium"
   key_name = "java-app-key"
 
@@ -24,7 +24,7 @@ resource "aws_instance" "app_server" {
 }
 
 resource "aws_instance" "db_server" {
-  ami = "ami-0c7217cdde317cfec"
+  ami = "ami-0a3c3a20c09d6f377"
   instance_type = "t2.medium"
   key_name = "java-app-key"
   
